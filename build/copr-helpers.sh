@@ -22,9 +22,9 @@ copr_install_isolated() {
 
     echo "Installing ${packages[*]} from COPR $copr_name (isolated)"
 
-    dnf5 -y copr enable "$copr_name"
-    dnf5 -y copr disable "$copr_name"
-    dnf5 -y install --enablerepo="$repo_id" "${packages[@]}"
+    $DNF_CMD -y copr enable "$copr_name"
+    $DNF_CMD -y copr disable "$copr_name"
+    $DNF_CMD -y install --enablerepo="$repo_id" "${packages[@]}"
 
     echo "Installed ${packages[*]} from $copr_name"
 }

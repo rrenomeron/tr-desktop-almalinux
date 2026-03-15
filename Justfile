@@ -1,4 +1,4 @@
-export image_name := env("IMAGE_NAME", "finpilot")
+export image_name := env("IMAGE_NAME", "almalinux-atomic-desktop-tr")
 export default_tag := env("DEFAULT_TAG", "localdev")
 export bib_image := env("BIB_IMAGE", "quay.io/centos-bootc/bootc-image-builder:latest@sha256:903c01d110b8533f8891f07c69c0ba2377f8d4bc7e963311082b7028c04d529d")
 
@@ -90,6 +90,7 @@ build $target_image=image_name $tag=default_tag:
     #!/usr/bin/env bash
 
     BUILD_ARGS=()
+    BUILD_ARGS+=("--build-arg" "IMAGE_NAME=$target_image" "--build-arg" "TAG=$tag")
     if [[ -z "$(git status -s)" ]]; then
         BUILD_ARGS+=("--build-arg" "SHA_HEAD_SHORT=$(git rev-parse --short HEAD)")
     fi

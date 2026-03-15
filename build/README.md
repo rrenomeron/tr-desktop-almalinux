@@ -73,5 +73,5 @@ If you want to run multiple scripts, you can:
 
 - Scripts run as root during build
 - Build context is available at `/ctx`
-- Use dnf5 for package management (not dnf or yum)
+- Use $DNF_CMD for package management (not dnf or yum)
 - Always use `-y` flag for non-interactive installs

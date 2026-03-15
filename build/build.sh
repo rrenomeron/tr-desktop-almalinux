@@ -1,6 +1,7 @@
 #!/usr/bin/bash
 
 set -eou pipefail
+source /ctx/oci/tr-osforge/build/helpers/utils.sh
 
 echo "Building ${IMAGE_NAME}:${TAG}"
 
@@ -20,7 +21,20 @@ OSFORGE_SCRIPTS_TO_USE=(
     "docker"
 )
 
-/ctx/build/custom.sh
+if command -v dnf5; then
+    export DNF_CMD=dnf5
+else 
+    export DNF_CMD=dnf
+fi
+
+echo "=========================================================================================="
+echo " STARTING $IMAGE_NAME OVERRIDES (PREBUILD)"
+echo "=========================================================================================="
+/ctx/build/image-overrides-prebuild.sh
+echo "=========================================================================================="
+echo " $IMAGE_NAME OVERRIDES (PREBUILD) FINISHED "
+echo "=========================================================================================="
+
 
 for scriptname in "${OSFORGE_SCRIPTS_TO_USE[@]}"; do
     echo "=========================================================================================="
@@ -37,5 +51,13 @@ echo " STARTING $IMAGE_NAME OVERRIDES "
 echo "=========================================================================================="
 /ctx/build/image-overrides.sh
 echo "=========================================================================================="
-echo " $IMAGE_NAME OVERRIDES FINISHED -- BUILD COMPLETE "
+echo " $IMAGE_NAME OVERRIDES FINISHED "
+echo "=========================================================================================="
+
+echo "=========================================================================================="
+echo " STARTING CUSTOM FLATPAK/BREW/UJUST CONFIGURATION" 
+echo "=========================================================================================="
+/ctx/build/custom.sh
+echo "=========================================================================================="
+echo " CUSTOM FLATPAK/BREW/UJUST CONFIGURATION FINISHED -- BUILD COMPLETE "
 echo "=========================================================================================="

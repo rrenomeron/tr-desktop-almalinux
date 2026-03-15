@@ -50,7 +50,7 @@ Click "Use this template" to create a new repository from this template.
 
 ### 2. Initialize the Project
 
-Important: Change `finpilot` to your repository name in these 6 files:
+Important: Change `almalinux-atomic-desktop-tr` to your repository name in these 6 files:
 
 1. `Containerfile` (line 4): `# Name: your-repo-name`
 2. `Justfile` (line 1): `export image_name := env("IMAGE_NAME", "your-repo-name")`
