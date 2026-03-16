@@ -10,5 +10,5 @@ set -eoux pipefail
 
 for j in /etc/dconf/db/distro.d/08-tr-ui-fixes \
          /usr/share/glib-2.0/schemas/zz1-10-tr-ui.gschema.override; do
-    sed 's/Adwaita Mono 13/Red Hat Mono 13/g' "$j"
+    sed -i 's/Adwaita Mono 13/Red Hat Mono 13/g' "$j"
 done
