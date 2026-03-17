@@ -47,7 +47,7 @@ COPY --from=ghcr.io/ublue-os/brew:latest@sha256:fef8b4728cb042f6b69ad9be90a43095
 COPY tr-osforge/reusable_scripting /oci/tr-osforge
 
 # Base Image - GNOME included
-FROM quay.io/almalinuxorg/atomic-desktop-gnome:latest
+FROM quay.io/almalinuxorg/atomic-desktop-gnome:latest@sha256:99381c8b06f34694f7cd05b070f8115c94612ce2562dbf3fc2ccc910605164d4
 
 ARG IMAGE_NAME
 ARG TAG
