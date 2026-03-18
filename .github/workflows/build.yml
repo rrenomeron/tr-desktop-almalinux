@@ -51,6 +51,7 @@ jobs:
           else
             DEFAULT_TAG=${BRANCH//\//-}
           fi
+          
           echo "DEFAULT_TAG=$DEFAULT_TAG" >> ${GITHUB_ENV}
           echo "Head ref: $GITHUB_HEAD_REF"
           echo "Branch $BRANCH"
@@ -60,6 +61,12 @@ jobs:
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
         with:
           submodules: recursive
+
+      - name: Get Short SHA
+        id: get-short-sha
+        run: |
+          SHORT_SHA=$(git rev-parse --short ${{ github.sha }})
+          echo "COMMIT_SHORT_SHA"=$SHORT_SHA >> $GITHUB_ENV
 
       # This is optional, but if you see that your builds are way too big for the runners, you can enable this by uncommenting the following lines:
       # - name: Maximize build space
@@ -97,8 +104,8 @@ jobs:
           # Default tags are "$DEFAULT_TAG" and "$DEFAULT_TAG.$date".
           tags: |
             type=raw,value=${{ env.DEFAULT_TAG }}
-            type=raw,value=${{ env.DEFAULT_TAG }}.{{date 'YYYYMMDD'}}
-            type=raw,value={{date 'YYYYMMDD'}}
+            type=raw,value=${{ env.DEFAULT_TAG }}.{{date 'YYYYMMDD'}}.${{ env.COMMIT_SHORT_SHA }}
+            type=raw,value={{date 'YYYYMMDD'}}.${{ env.COMMIT_SHORT_SHA }}
             type=sha,enable=${{ github.event_name == 'pull_request' }}
             type=ref,event=pr
           labels: |
@@ -110,7 +117,7 @@ jobs:
             org.opencontainers.image.title=${{ env.IMAGE_NAME }}
             org.opencontainers.image.url=https://github.com/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}/tree/${{ github.sha }}
             org.opencontainers.image.vendor=${{ github.repository_owner }}
-            org.opencontainers.image.version=${{ env.DEFAULT_TAG }}.{{date 'YYYYMMDD'}}
+            org.opencontainers.image.version=${{ env.DEFAULT_TAG }}.{{date 'YYYYMMDD'}}.${{ env.COMMIT_SHORT_SHA }}
             io.artifacthub.package.deprecated=false
             io.artifacthub.package.keywords=${{ env.IMAGE_KEYWORDS }}
             io.artifacthub.package.license=Apache-2.0
