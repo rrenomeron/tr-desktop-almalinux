@@ -157,6 +157,8 @@ jobs:
             rechunk --max-layers 96 \
             localhost/"${{ env.IMAGE_NAME }}:${{ env.DEFAULT_TAG }}" \
             localhost/"${{ env.IMAGE_NAME }}:${{ env.DEFAULT_TAG }}"
+          # Fix perms after root writes to the database
+          sudo chmod -R $USER:$USER $HOME/.local/share/containers
 
       # Tag for registry
       - name: Tag for registry
