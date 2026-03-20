@@ -147,11 +147,13 @@ jobs:
         run: |
           #!/usr/bin/bash
           echo "Saving image to rootful storage ..."
-          podman image scp $(whoami)@localhost::localhost/"${{ env.IMAGE_NAME }}:${{ env.DEFAULT_TAG }}"
+          sudo podman image scp $(whoami)@localhost::localhost/"${{ env.IMAGE_NAME }}:${{ env.DEFAULT_TAG }}" \
+            root@localhost::localhost/"${{ env.IMAGE_NAME }}:${{ env.DEFAULT_TAG }}"
+
           echo "... done."
           
           sudo podman run --rm --privileged \
-            -v /var/lib/containers:/var/lib/containers \
+            -v /var/lib/containers:/var/lib/containers \r
             --entrypoint /usr/libexec/bootc-base-imagectl \
             quay.io/fedora/fedora-bootc:43 \
             rechunk --max-layers 128 \
