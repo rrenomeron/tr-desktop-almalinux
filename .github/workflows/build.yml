@@ -145,24 +145,28 @@ jobs:
 
       - name: Rechunk Image
         run: |
-          #echo "Saving image to rootful storage ..."
-          #podman save -o image.tar localhost/"${{ env.IMAGE_NAME }}:${{ env.DEFAULT_TAG }}"
-          #sudo podman image load < image.tar
-          #echo "... done."
-          echo "Local containers storage is $HOME/.local/share/containers"
+          #!/usr/bin/bash
+          echo "Saving image to rootful storage ..."
+          podman image scp $(whoami)@localhost::localhost/"${{ env.IMAGE_NAME }}:${{ env.DEFAULT_TAG }}"
+          echo "... done."
+          
           sudo podman run --rm --privileged \
-            -v $HOME/.local/share/containers:/var/lib/containers \
+            -v /var/lib/containers:/var/lib/containers \
             --entrypoint /usr/libexec/bootc-base-imagectl \
             quay.io/fedora/fedora-bootc:43 \
-            rechunk --max-layers 96 \
+            rechunk --max-layers 128 \
             localhost/"${{ env.IMAGE_NAME }}:${{ env.DEFAULT_TAG }}" \
             localhost/"${{ env.IMAGE_NAME }}:${{ env.DEFAULT_TAG }}"
-          # Fix perms after root writes to the database
-          sudo chown -R $USER:$USER $HOME/.local/share/containers
+
+          echo "Copying image back to user storage"
+          sudo podman image scp root@localhost::localhost/"${{ env.IMAGE_NAME }}:${{ env.DEFAULT_TAG }}" $(whoami)@localhost::
+
+          
 
       # Tag for registry
       - name: Tag for registry
         run: |
+          
           for tag in ${{ steps.metadata.outputs.tags }}; do
             podman tag ${{ env.IMAGE_NAME }}:${{ env.DEFAULT_TAG }} ${{ env.IMAGE_NAME }}:$tag
           done

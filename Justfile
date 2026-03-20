@@ -110,17 +110,16 @@ build $target_image=image_name $tag=default_tag:
 #
 rechunk $target_image=image_name $tag=default_tag:
     #!/usr/bin/env bash
-    podman save -o image.tar localhost/${target_image}:${tag}
-    sudo podman load < image.tar
-    rm image.tar
+    podman image scp $(whoami)@localhost::localhost/${target_image}:${tag}
     sudo podman run --rm --privileged \
         -v /var/lib/containers:/var/lib/containers \
         --entrypoint=/usr/libexec/bootc-base-imagectl quay.io/fedora/fedora-bootc:43  \
-        rechunk --max-layers 96 \
+        rechunk --max-layers 128 \
         localhost/${target_image}:${tag} \
         localhost/${target_image}:${tag}
+    sudo podman image scp root@localhost::${target_image}:${tag} $(whoami)@localhost::
 # Command: _rootful_load_image
-# Description: This script checks if the current user is root or running under sudo. If not, it attempts to resolve the image tag using podman inspect.
+# Description: This script checks if the cpourrent user is root or running under sudo. If not, it attempts to resolve the image tag using podman inspect.
 #              If the image is found, it loads it into rootful podman. If the image is not found, it pulls it from the repository.
 #
 # Parameters:
