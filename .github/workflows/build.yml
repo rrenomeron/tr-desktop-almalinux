@@ -147,9 +147,12 @@ jobs:
         run: |
           #!/usr/bin/bash
           echo "Saving image to rootful storage ..."
-          sudo podman image scp $(whoami)@localhost::localhost/"${{ env.IMAGE_NAME }}:${{ env.DEFAULT_TAG }}" \
-            root@localhost::localhost/"${{ env.IMAGE_NAME }}:${{ env.DEFAULT_TAG }}"
+          #sudo podman image scp $(whoami)@localhost::localhost/"${{ env.IMAGE_NAME }}:${{ env.DEFAULT_TAG }}" \
+          #  root@localhost::localhost/"${{ env.IMAGE_NAME }}:${{ env.DEFAULT_TAG }}"
 
+          podman save -o image.tar localhost/"${{ env.IMAGE_NAME }}:${{ env.DEFAULT_TAG }}"
+          sudo podman image load < image.tar
+          rm image.tar
           echo "... done."
           
           sudo podman run --rm --privileged \
@@ -161,9 +164,10 @@ jobs:
             localhost/"${{ env.IMAGE_NAME }}:${{ env.DEFAULT_TAG }}"
 
           echo "Copying image back to user storage"
-          sudo podman image scp root@localhost::localhost/"${{ env.IMAGE_NAME }}:${{ env.DEFAULT_TAG }}" $(whoami)@localhost::
-
-          
+          #sudo podman image scp root@localhost::localhost/"${{ env.IMAGE_NAME }}:${{ env.DEFAULT_TAG }}" $(whoami)@localhost::
+          sudo podman save -o image.tar localhost/"${{ env.IMAGE_NAME }}:${{ env.DEFAULT_TAG }}"
+          podman image load < image.tar
+          sudo rm image.tar
 
       # Tag for registry
       - name: Tag for registry
