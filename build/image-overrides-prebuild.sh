@@ -15,7 +15,10 @@
 # to install Chrome.
 
 if [ ! -f /usr/bin/xdg-icon-resource ]; then
-    dnf install -y patch xdg-utils
+    dnf install -y xdg-utils
+fi
+if [ ! -f /usr/bin/patch ]; then
+    dnf install -y patch
 fi
 
 patch /usr/bin/xdg-icon-resource << "END_PATCH"

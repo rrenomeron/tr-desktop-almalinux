@@ -10,17 +10,17 @@ echo "Building ${IMAGE_NAME}:${TAG}"
 # suffix, e.g. putting "google-chrome" in this array will run "google-chrome.sh" in your build.
 # The scripts are run in order.
 OSFORGE_SCRIPTS_TO_USE=(
-    "multimedia-support"
-    "flatpak-substiution-removals"
-    "bluefin-parity"
+    # "multimedia-support"
+    # "flatpak-substiution-removals"
+    # "bluefin-parity"
     "tr-pki"
     "tr-ui"
-    "brew"
+    # "brew"
     "google-chrome"
     "vscode"
-    "cockpit"
-    "virtualization"
-    "docker"
+    # "cockpit"
+    # "virtualization"
+    # "docker"
 )
 
 if command -v dnf5; then
