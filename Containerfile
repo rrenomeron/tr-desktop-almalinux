@@ -48,7 +48,7 @@ COPY tr-osforge/reusable_scripting /oci/tr-osforge
 
 # Base Image - GNOME included
 #FROM quay.io/almalinuxorg/atomic-desktop-gnome:latest@sha256:a8dcfbc066519a4580c8b1f0193e09f2d6fd050bbad35b0efa7018a6700e24ea
-FROM ghcr.io/tuna-os/albacore-dx:latest
+FROM ghcr.io/tuna-os/albacore-dx:latest@sha256:2fa0396c3759ed4aabe245de461728ea3c660ec05d89cd346626ffda7defb641
 
 ARG IMAGE_NAME
 ARG TAG
