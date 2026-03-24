@@ -15,12 +15,12 @@ on:
   workflow_dispatch:
 
 env:
-  IMAGE_DESC: "My Customized Universal Blue Image"
-  IMAGE_KEYWORDS: "bootc,ublue,universal-blue"
+  IMAGE_DESC: "Thorson-Renomeron Organization Standard Operating Environment Bootable Container for AlmaLinux"
+  IMAGE_KEYWORDS: "bootc,ublue,universal-blue,almalinux,el"
   IMAGE_LOGO_URL: "https://avatars.githubusercontent.com/u/120078124?s=200&v=4"  # Put your own image here for a fancy profile on https://artifacthub.io/!
   IMAGE_NAME: "${{ github.event.repository.name }}"  # output image name, usually same as repo name
   IMAGE_REGISTRY: "ghcr.io/${{ github.repository_owner }}"  # do not edit
-  DEFAULT_TAG: "stable"
+  DEFAULT_TAG: "testing"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref || github.run_id }}-${{ inputs.brand_name}}-${{ inputs.stream_name }}
@@ -142,19 +142,20 @@ jobs:
           build-args: |
             IMAGE_NAME=${{ env.IMAGE_NAME }}
             TAG=${{ env.DEFAULT_TAG }}
+      # - name: setup Just
+      #   uses: extractions/setup-just@f8a3cce218d9f83db3a2ecd90e41ac3de6cdfd9b
+
+      # - name: Build Image
+      #   run: \
+      #     just build ${{ env.IMAGE_NAME }} ${{ env.DEFAULT_TAG }}
 
       - name: Rechunk Image
         run: |
-          #!/usr/bin/bash
           echo "Saving image to rootful storage ..."
-          #sudo podman image scp $(whoami)@localhost::localhost/"${{ env.IMAGE_NAME }}:${{ env.DEFAULT_TAG }}" \
-          #  root@localhost::localhost/"${{ env.IMAGE_NAME }}:${{ env.DEFAULT_TAG }}"
-
           podman save -o image.tar localhost/"${{ env.IMAGE_NAME }}:${{ env.DEFAULT_TAG }}"
           sudo podman image load < image.tar
           rm image.tar
           echo "... done."
-          
           sudo podman run --rm --privileged \
             -v /var/lib/containers:/var/lib/containers \
             --entrypoint /usr/libexec/bootc-base-imagectl \
@@ -162,17 +163,15 @@ jobs:
             rechunk --max-layers 128 \
             localhost/"${{ env.IMAGE_NAME }}:${{ env.DEFAULT_TAG }}" \
             localhost/"${{ env.IMAGE_NAME }}:${{ env.DEFAULT_TAG }}"
-
-          echo "Copying image back to user storage"
-          #sudo podman image scp root@localhost::localhost/"${{ env.IMAGE_NAME }}:${{ env.DEFAULT_TAG }}" $(whoami)@localhost::
+          echo "Saving image to regular storage"  
           sudo podman save -o image.tar localhost/"${{ env.IMAGE_NAME }}:${{ env.DEFAULT_TAG }}"
           podman image load < image.tar
           sudo rm image.tar
+          echo "done"
 
       # Tag for registry
       - name: Tag for registry
         run: |
-          
           for tag in ${{ steps.metadata.outputs.tags }}; do
             podman tag ${{ env.IMAGE_NAME }}:${{ env.DEFAULT_TAG }} ${{ env.IMAGE_NAME }}:$tag
           done
@@ -200,14 +199,14 @@ jobs:
       #   run: |
       #     OUTPUT_PATH="$(mktemp -d)/sbom.json"
       #     export SYFT_PARALLELISM=$(($(nproc)*2))
-      #     $SYFT_CMD ${IMAGE}:${DEFAULT_TAG} -o spdx-json=${OUTPUT_PATH}
+      #     $SYFT_CMD localhost/${IMAGE}:${DEFAULT_TAG} -o spdx-json=${OUTPUT_PATH}
       #     echo "OUTPUT_PATH=${OUTPUT_PATH}" >> $GITHUB_OUTPUT
 
       # These `if` statements are so that pull requests for your custom images do not make it publish any packages under your name without you knowing
       # They also check if the runner is on the default branch so that things like the merge queue (if you enable it), are going to work
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3
-        if: github.event_name != 'pull_request' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
+        if: github.event_name != 'pull_request' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/production')
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -215,7 +214,7 @@ jobs:
 
       - name: Push To GHCR
         uses: redhat-actions/push-to-registry@5ed88d269cf581ea9ef6dd6806d01562096bee9c # v2
-        if: github.event_name != 'pull_request' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+        if: github.event_name != 'pull_request' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/production')
         id: push
         env:
           REGISTRY_USER: ${{ github.actor }}
