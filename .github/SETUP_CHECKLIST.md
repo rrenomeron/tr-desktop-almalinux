@@ -3,7 +3,7 @@
 ## Initial Setup
 
 ### 1. Rename Template
-- [ ] Update `almalinux-atomic-desktop-tr` to your name in: Containerfile, Justfile, README.md, artifacthub-repo.yml
+- [ ] Update `tr-desktop-almalinux` to your name in: Containerfile, Justfile, README.md, artifacthub-repo.yml
 
 ### 2. Enable GitHub Actions
 - [ ] Settings → Actions → General → Enable workflows
