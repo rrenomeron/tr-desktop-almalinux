@@ -1,14 +1,18 @@
 # Build Scripts
 
-This directory contains build scripts that run during image creation. Scripts are executed in numerical order.
+This directory contains the scripts that run the majority of the image build process.
 
 ## How It Works
 
-Scripts are named with a number prefix (e.g., `10-build.sh`, `20-onepassword.sh`) and run in ascending order during the container build process.
+The build is controlled by the ``build.sh`` script.  You'll need to edit it to include the reusable scripts
+from ``tr-osforge`` you'll want to use by adding the names of the scripts (sans the ``.sh`` suffix) to the
+``OSFORGE_SCRIPTS_TO_USE`` array variable in the script.
 
 ## Included Scripts
 
-- **`10-build.sh`** - Main build script for base system modifications, package installation, and service configuration
+- ``build.sh`` - Controller script for the build process.
+- ``custom.sh`` - Sets up the Flatpaks, Brewfiles, and ``ujust`` scripts that are included on your image.
+- ``image-overrides.sh`` - Anything that is specific to this particular image that can't be shared in the ``tr-osforge`` repository.
 
 ## Example Scripts
 
@@ -60,7 +64,7 @@ To temporarily disable a script without deleting it:
 The Containerfile runs scripts like this:
 
 ```dockerfile
-RUN /ctx/build/build.sh
+RUN /ctx/build/10-build.sh
 ```
 
 If you want to run multiple scripts, you can:
@@ -73,5 +77,5 @@ If you want to run multiple scripts, you can:
 
 - Scripts run as root during build
 - Build context is available at `/ctx`
-- Use $DNF_CMD for package management (not dnf or yum)
+- Use dnf5 for package management (not dnf or yum)
 - Always use `-y` flag for non-interactive installs
