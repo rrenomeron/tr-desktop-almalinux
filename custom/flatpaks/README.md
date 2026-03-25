@@ -69,12 +69,13 @@ Or browse Flathub: https://flathub.org/
 ## Customization
 
 Edit the existing file or create new ones:
-- **[`image.preinstall`](image.preinstall)** - These are apps that should only be installed on
-  this particular image.
-- Look in ``tr-osforge/reusable_scripting/custom/flatpaks`` and ensure the app you want to install
-  isn't already set to be installed.
+- **[`default.preinstall`](default.preinstall)** - Modify the default application list
+- **Create new files:**
+  - `development.preinstall` - Development tools
+  - `gaming.preinstall` - Gaming applications
+  - `media.preinstall` - Media editing tools
 
-Each new `.preinstall` file will be automatically copied during the build process. See [`build/build.sh`](../../build/build.sh) for how files are copied.
+Each new `.preinstall` file will be automatically copied during the build process. See [`build/10-build.sh`](../../build/10-build.sh) for how files are copied.
 
 ## Important Notes
 
