@@ -24,11 +24,13 @@
 #    - Local build scripts and custom files
 #    - @projectbluefin/common - Desktop configuration shared with Aurora 
 #    - @ublue-os/brew - Homebrew integration
+#    - @rrenomeron/tr-osforge - Shared build scripting
 #
 # 2. Base Image Options:
-#    - `ghcr.io/ublue-os/silverblue-main:latest` (Fedora and GNOME)
-#    - `ghcr.io/ublue-os/base-main:latest` (Fedora and no desktop 
-#    - `quay.io/centos-bootc/centos-bootc:stream10 (CentOS-based)` 
+#    - quay.io/almalinuxorg/atomic-desktop-gnome ("Silverblue, but AlmaLinux")
+#
+# 3. Customizations:
+#    - see build/build.sh and custom/*
 #
 # See: https://docs.projectbluefin.io/contributing/ for architecture diagram
 ###############################################################################
@@ -46,23 +48,12 @@ COPY custom /custom
 # Copy from submodule.  We put it under /oci for convenience
 COPY tr-osforge/reusable_scripting /oci/tr-osforge
 
-# Base Image - GNOME included
+# Base Image stage
 #FROM quay.io/almalinuxorg/atomic-desktop-gnome:latest@sha256:a8dcfbc066519a4580c8b1f0193e09f2d6fd050bbad35b0efa7018a6700e24ea
 FROM ghcr.io/tuna-os/albacore-dx:latest@sha256:2fa0396c3759ed4aabe245de461728ea3c660ec05d89cd346626ffda7defb641
 
 ARG IMAGE_NAME
 ARG TAG
-
-### /opt
-## Some bootable images, like Fedora, have /opt symlinked to /var/opt, in order to
-## make it mutable/writable for users. However, some packages write files to this directory,
-## thus its contents might be wiped out when bootc deploys an image, making it troublesome for
-## some packages. Eg, google-chrome, docker-desktop.
-##
-## Uncomment the following line if one desires to make /opt immutable and be able to be used
-## by the package manager.
-
-# RUN rm /opt && mkdir /opt
 
 ### MODIFICATIONS
 ## Make modifications desired in your image and install packages by modifying the build scripts.
@@ -73,7 +64,8 @@ ARG TAG
 ##   - Files from @projectbluefin/branding at /oci/branding
 ##   - Files from @ublue-os/artwork at /oci/artwork
 ##   - Files from @ublue-os/brew at /oci/brew
-## Scripts are run in numerical order (10-build.sh, 20-example.sh, etc.)
+##   - Files from @rrenomeron/tr-osforge at /oci/tr-osforge
+## See build/build.sh for more details
 
 RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
     --mount=type=cache,dst=/var/cache \
