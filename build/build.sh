@@ -15,6 +15,7 @@ OSFORGE_SCRIPTS_TO_USE=(
     "bluefin-parity"
     "tr-pki"
     "tr-ui"
+    "gnome-wallpaper"
     "brew"
     "google-chrome"
     "vscode"
