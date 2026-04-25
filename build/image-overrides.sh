@@ -19,8 +19,31 @@ dnf install -y just
 # Apparently this needs to be done for non-RHEL EL in order to download images from Red Hat.
 # See https://access.redhat.com/articles/3116561
 
-# podman image trust set -f /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release registry.access.redhat.com
-# podman image trust set -f /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release registry.redhat.io
+# Since Apr 20 2026 we can't do this during build time.
+
+cat << SCRIPT > /usr/sbin/set-redhat-registry-trust
+#!/usr/bin/bash
+set -eoux pipefail
+podman image trust set -f /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release registry.access.redhat.com
+podman image trust set -f /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release registry.redhat.io
+SCRIPT
+chmod ugo+x /usr/sbin/set-redhat-registry-trust
+
+cat << SYSTEMD_UNIT > /usr/lib/systemd/system/trust-redhat-registry.service
+[Unit]
+Description=Set Trust for Red Hat Container Registries
+Documentation=https://access.redhat.com/articles/3116561
+
+[Service]
+Type=oneshot
+ExecStart=/usr/sbin/set-redhat-registry-trust
+
+[Install]
+WantedBy=multi-user.target
+SYSTEMD_UNIT
+
+systemctl enable trust-redhat-registry.service
+
 cat << EOF > /etc/containers/registries.d/registry.access.redhat.com.yaml
 docker:
      registry.access.redhat.com:

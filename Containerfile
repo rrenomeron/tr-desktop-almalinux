@@ -42,14 +42,14 @@ COPY build /build
 COPY custom /custom
 # Copy from OCI containers to distinct subdirectories to avoid conflicts
 # Note: Renovate can automatically update these :latest tags to SHA-256 digests for reproducibility
-COPY --from=ghcr.io/projectbluefin/common:latest@sha256:f3070c22c90a189848937e4a74e24fa132a538dff722410c3aaa36f7a3c9240e /system_files /oci/common
-COPY --from=ghcr.io/ublue-os/brew:latest@sha256:20d951fe7826ecc099b924a127eab4949f0a8566b15bf76a22bdb95a49468919 /system_files /oci/brew
+COPY --from=ghcr.io/projectbluefin/common:latest@sha256:60d01521cc7a83150a056c2c27a5f5b7f3b9aa9beefe55a09edb58dadb614f90 /system_files /oci/common
+COPY --from=ghcr.io/ublue-os/brew:latest@sha256:a62826f010ad77dcbf3cba0ddafe1bf8ce7aa42e55c9f4ebb5ee096845270480 /system_files /oci/brew
 
 # Copy from submodule.  We put it under /oci for convenience
 COPY tr-osforge/reusable_scripting /oci/tr-osforge
 
 # Base Image stage
-FROM quay.io/almalinuxorg/atomic-desktop-gnome:latest@sha256:41b7a1165838af58bf970dfcd2f0f7f6c22c8bfc107f1cfba466a0b653af4601
+FROM quay.io/almalinuxorg/atomic-desktop-gnome:latest@sha256:43542d9b3f9f8b102f36a6265019834568edb5229dac71e1d53faff591c3f794
 
 
 ARG IMAGE_NAME
