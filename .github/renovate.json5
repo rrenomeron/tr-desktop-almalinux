@@ -2,11 +2,10 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:best-practices",
-  ],  
+  ],
   "git-submodules": {
       "enabled": true
     },
-
   // Do not rebase when the default branch is updated
   "rebaseWhen": "never",
 
@@ -54,9 +53,9 @@
       "matchUpdateTypes": ["major", "minor", "patch", "digest", "pinDigest"],
       "matchPackageNames": ["ghcr.io/hhd-dev/rechunk"],
       "automerge": false
-    },
-//    {
-//      "description": "Enable GitHub Actions updates since they are now pinned with SHA",
+    }//,
+    // {
+    //   "description": "Enable GitHub Actions updates since they are now pinned with SHA",
     //   "enabled": true,
     //   "matchUpdateTypes": ["digest", "pinDigest", "pin", "major", "minor", "patch"],
     //   "matchDepTypes": ["action"],
